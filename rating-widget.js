@@ -1,97 +1,7 @@
-// class RatingWidget extends HTMLElement {
-//   constructor() {
-//     super();
-//     this.build();
-//   }
-
-//   build() {
-//     const shadow = this.attachShadow({ mode: 'open' });
-//     shadow.appendChild(this.styles());
-
-//     const maxRating = this.getAttribute('max') || 5;
-//     const starContainer = document.createElement('div');
-
-//     for (let i = 1; i <= maxRating; i++) {
-//       const star = document.createElement('span');
-//       star.textContent = '\u{2606}';
-//       star.dataset.value = i;
-//       star.style.cursor = 'pointer';
-//       starContainer.appendChild(star);
-
-//       star.addEventListener('click', this.rate.bind(this));
-//       star.addEventListener('mouseover', this.hover.bind(this));
-//       star.addEventListener('mouseout', this.reset.bind(this));
-//     }
-
-//     shadow.appendChild(starContainer);
-//   }
-
-//   styles() {
-//     const style = document.createElement('style');
-//     style.textContent = `
-//       div {
-//         display: inline-block;
-//       }
-//       span {
-//         font-size: 24px;
-//         color: var(--star-color, #ccc);
-//       }
-//       span:hover,
-//       span.hover {
-//         color: var(--star-hover-color, orange);
-//       }
-//       span.selected {
-//         color: var(--star-selected-color, yellow);
-//       }
-//     `;
-//     return style;
-//   }
-
-//   rate(event) {
-//     this.value = event.target.dataset.value;
-//     this.update(this.value);
-
-//     // Send the rating to server
-//     const form = this.querySelector('form');
-//     if (form) {
-//       const ratingInput = form.querySelector('input[name="rating"]');
-//       if (ratingInput) {
-//         ratingInput.value = this.value;
-//         form.submit();
-//       }
-//     }
-//   }
-
-//   hover(event) {
-//     this.update(event.target.dataset.value);
-//   }
-
-//   reset() {
-//     this.update(this.value);
-//   }
-
-//   update(value) {
-//     const stars = this.shadowRoot.querySelectorAll('span');
-//     stars.forEach(star => {
-//       if (star.dataset.value <= value) {
-//         star.classList.add('selected');
-//       } else {
-//         star.classList.remove('selected');
-//       }
-//     });
-//   }
-
-//   connectedCallback() {
-//     this.value = this.getAttribute('value') || 0;
-//     this.update(this.value);
-//   }
-// }
-
-// customElements.define('rating-widget', RatingWidget);
-
 class RatingWidget extends HTMLElement {
   constructor() {
     super();
+    this.maxRating = 5;
     this.build();
   }
 
@@ -99,10 +9,10 @@ class RatingWidget extends HTMLElement {
     const shadow = this.attachShadow({ mode: 'open' });
     shadow.appendChild(this.styles());
 
-    const maxRating = 5;
+    // const maxRating = 5;
     const starContainer = document.createElement('div');
     const stars = []
-    for (let i = 1; i <= maxRating; i++) {
+    for (let i = 1; i <= this.maxRating; i++) {
       const star = document.createElement('span');
       star.textContent = '\u{2606}';
       star.setAttribute('id', `star-${i}`);
@@ -111,7 +21,6 @@ class RatingWidget extends HTMLElement {
       stars.push(star);
       starContainer.appendChild(star);
 
-      // star.addEventListener('click', this.rate.bind(this));
       star.addEventListener('mouseover', () => {
         for(let j = 0; j < i; j++){
           const currStar = stars[j];
@@ -192,7 +101,7 @@ class RatingWidget extends HTMLElement {
         // Success!
         console.log(request.responseText);
       } else {
-        // We reached our target server, but it returned an error
+        // Reached the target server, but it returned an error
         console.error('Error on sending rating');
       }
     };
@@ -208,11 +117,11 @@ class RatingWidget extends HTMLElement {
     // Reset the stars after a delay
     setTimeout(() => {
       this.resetStars();
-    }, 2000); // Reset after 2 seconds
+    }, 2000);
   }
 
 
-  // This function resets the stars to the default empty state
+  // Resets the stars to the default empty state
   resetStars() {
     const stars = this.shadowRoot.querySelectorAll('span');
     stars.forEach(star => {
@@ -229,7 +138,7 @@ class RatingWidget extends HTMLElement {
   }
 
 
-  // This function updates the stars based on the rating value
+  // Updates the stars based on the rating value
   updateStars(value) {
     const stars = this.shadowRoot.querySelectorAll('span');
     stars.forEach((star, index) => {
@@ -243,6 +152,8 @@ class RatingWidget extends HTMLElement {
 
   // Function to show a message based on the rating
   showMessage(rating, maxRating) {
+    console.log(rating);
+    console.log(maxRating);
     let message = '';
     if (rating / maxRating >= 0.8) {
       message = `Thanks for ${rating} star rating!`;
@@ -252,12 +163,12 @@ class RatingWidget extends HTMLElement {
     this.displayMessage(message);
   }
 
-  // Function to display the message on the page
+  // Display the message on the page
   displayMessage(msg) {
     const pElement = document.createElement('p');
     pElement.className = 'rating-message'; // Add a class for easy selection
     pElement.innerHTML = msg;
-    // Append the message to the shadow DOM so it's encapsulated within the component
+    // Append the message to the shadow DOM
     this.shadowRoot.appendChild(pElement);
   }
 }
