@@ -1,0 +1,24 @@
+:root {
+    --star-color: gold; 
+    --star-size: 2em;
+  }
+  
+.rating-widget {
+display: inline-block;
+border: 1px solid #ddd;
+padding: 10px;
+border-radius: 5px;
+}
+
+.star {
+color: var(--star-color);
+font-size: var(--star-size); 
+}
+
+.selected {
+color: var(--star-color); 
+}
+
+.unselected {
+color: #ddd;
+}
